@@ -1,0 +1,45 @@
+name: example-android
+
+# Manual trigger for now. The patched compiler cannot build on Linux
+# (its Zip dependency does not compile against Glibc - verified in first
+# flight), so this job tests the OTHER open question: does Android
+# codegen need the patch at all? The patch fixes merged type headers,
+# an iOS/Swift-side failure. This job uses the stock prebuilt compiler.
+on:
+  workflow_dispatch:
+
+jobs:
+  apk:
+    # macOS, same as upstream's own release test: the Valdi toolchain does
+    # not build Android on Linux (its Zip/clang deps break, and platform-
+    # based android lacks JDK runtime toolchains there). An arm64 macOS
+    # host also matches the example's android arm64 defaults exactly.
+    runs-on: macos-latest
+    timeout-minutes: 90
+    env:
+      ANDROID_HOME: /Users/runner/Library/Android/sdk
+      ANDROID_NDK_HOME: /Users/runner/Library/Android/sdk/ndk/29.0.14206865
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install NDK
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;29.0.14206865" >/dev/null
+
+      - name: Fetch the Valdi release tarball (registry + toolchain + prebuilt libs)
+        run: |
+          curl -sL https://github.com/Snapchat/Valdi/archive/beta-0.1.1.tar.gz | tar xz
+          mv Valdi-beta-0.1.1 example/valdi
+
+      - name: Build the example APK (prebuilt compiler, no patch)
+        run: |
+          cd example
+          bazel build //:example_app_android \
+            --@valdi//bzl/valdi:use_local_compiler=false \
+            --repo_env=ANDROID_HOME=$ANDROID_HOME \
+            --repo_env=ANDROID_NDK_HOME=$ANDROID_NDK_HOME
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: example-app-android
+          path: example/bazel-bin/example_app_android.apk

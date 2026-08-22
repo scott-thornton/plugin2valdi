@@ -1,0 +1,12 @@
+{
+  "name": "test-clipboard",
+  "version": "1.0.0",
+  "codegenConfig": {
+    "name": "rnclip",
+    "type": "modules",
+    "jsSrcsDir": "./src",
+    "android": {
+      "javaPackageName": "com.rnclip.clip"
+    }
+  }
+}

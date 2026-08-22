@@ -1,0 +1,23 @@
+node_modules/
+out/
+survey-out/
+scratch/
+scratch2/
+test/tmp/
+*.log
+.DS_Store
+
+# Vendored Valdi source trees (patched fork, diff baseline, upstream clone)
+valdi-fork/
+valdi-pristine-copy/
+valdi-upstream/
+
+# example app bazel artifacts
+example/bazel-*
+example/.azelrc
+
+# local Valdi checkout the example builds against (symlink or clone; see example/README.md)
+example/valdi
+
+# local-only working notes (kept, never shipped)
+ISSUES-DRAFTS.md

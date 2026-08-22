@@ -1,0 +1,17 @@
+load("@valdi//bzl/valdi:valdi_application.bzl", "valdi_application")
+
+valdi_application(
+    name = "example_app",
+    ios_bundle_id = "com.example.plugin2valdi",
+    ios_families = ["iphone"],
+    root_component_path = "App@example/src/App",
+    title = "plugin2valdi example",
+    version = "1.0.0",
+    deps = [
+        "//modules/clipboard",
+        "//modules/async_storage",
+        "//modules/example",
+        "//modules/test_events",
+        "//modules/test_params",
+    ],
+)
