@@ -39,7 +39,7 @@ jobs:
             --repo_env=ANDROID_NDK_HOME=$ANDROID_NDK_HOME
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: example-app-android
           path: example/bazel-bin/example_app_android.apk

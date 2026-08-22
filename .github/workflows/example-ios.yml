@@ -32,7 +32,7 @@ jobs:
           bazel build //:example_app_ios --@valdi//bzl/valdi:use_local_compiler=true
 
       - name: Upload app
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: example-app-ios
           path: example/bazel-out/**/example_app_ios_archive-root/Payload/*.app
