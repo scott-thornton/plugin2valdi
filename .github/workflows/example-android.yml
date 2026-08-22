@@ -20,7 +20,7 @@ jobs:
       ANDROID_HOME: /Users/runner/Library/Android/sdk
       ANDROID_NDK_HOME: /Users/runner/Library/Android/sdk/ndk/29.0.14206865
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Install NDK
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;29.0.14206865" >/dev/null
