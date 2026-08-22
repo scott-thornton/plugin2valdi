@@ -1,0 +1,66 @@
+# plugin2valdi generated BUILD.bazel - verified green contract shape
+load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
+load("@valdi//bzl/valdi:valdi_android_library.bzl", "valdi_android_library")
+
+valdi_module(
+    name = "test_params",
+    srcs = glob([
+        "src/**/*.ts",
+        "src/**/*.tsx",
+    ]) + ["tsconfig.json"],
+    android_class_path = "com.plugin2valdi.modules.test_params",
+    # Android impl (conformance): the Java implementation + Kotlin factory
+    # are exported from :test_params_kt - same wiring valdi_webview uses
+    # for its own android impl.
+    android_deps = [":test_params_android_impl"],
+    # Conformance (blocked upstream in Valdi beta-0.1.1 - three-part
+    # Swift interop defect chain; findings in FLAGS.md). Uncomment when fixed:
+    ios_deps = [":test_params_conformance", ":test_params_factory"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@valdi//src/valdi_modules/src/valdi/valdi_core",
+    ],
+)
+
+# Android implementation: generated-Kotlin interface implementor (TestParamsModuleImpl,
+# package-private - a public class would collide with the interface), the
+# @RegisterValdiModule Kotlin factory (annotation processor emits the
+# assets/valdi_native_modules manifest entry), and copied bridge-free
+# plugin helpers. kt_android_library compiles mixed .kt/.java sources.
+valdi_android_library(
+    name = "test_params_android_impl",
+    srcs = glob([
+        "android/**",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":test_params_api_kt",
+        "@valdi//valdi:valdi_java",
+    ],
+)
+
+# Conformance targets (blocked upstream - uncomment + fix imports when Swift
+# visibility for user modules lands):
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+load("@valdi//bzl:modulemap.bzl", "modulemap")
+swift_library(
+    name = "test_params_conformance",
+    srcs = ["ios/test_params_conformance.swift", "ios/test_params_support.swift"],
+    module_name = "TestParamsConformance",
+    generates_header = True,
+    target_compatible_with = ["@platforms//os:ios"],
+    deps = [":test_params_api_objc", "@valdi//valdi_core:valdi_core_objc"],
+)
+modulemap(
+    name = "test_params_conformance_map",
+    hdrs = [":test_params_conformance"],
+    module_name = "TestParamsConformance",
+)
+
+objc_library(
+    name = "test_params_factory",
+    srcs = ["ios/test_params_factory.m"],
+    copts = ["-I.", "-fmodules"],
+    target_compatible_with = ["@platforms//os:ios"],
+    deps = [":test_params_api_objc", ":test_params_conformance", "@valdi//valdi_core:valdi_core_objc"],
+)

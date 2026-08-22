@@ -1,0 +1,9 @@
+{
+  "name": "test-asyncstore",
+  "version": "1.0.0",
+  "codegenConfig": {
+    "name": "testasyncstore",
+    "type": "modules",
+    "jsSrcsDir": "./src"
+  }
+}

@@ -1,0 +1,67 @@
+# plugin2valdi generated BUILD.bazel - verified green contract shape
+load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
+load("@valdi//bzl/valdi:valdi_android_library.bzl", "valdi_android_library")
+
+valdi_module(
+    name = "clipboard",
+    # tsconfig.json must be in srcs: without it the Valdi compiler emits
+    # only .d.ts for the module and packs no compiled JS into the
+    # .valdimodule - the app then dies at runtime with
+    # "No item named '<module>/src/*.js' in module '...'"
+    srcs = glob([
+        "src/**/*.ts",
+        "src/**/*.tsx",
+    ]) + ["tsconfig.json"],
+    android_class_path = "com.plugin2valdi.modules.clipboard",
+    # Android impl (conformance): the Java implementation + Kotlin factory
+    # are exported from :clipboard_kt - same wiring valdi_webview uses
+    # for its own android impl.
+    android_deps = [":clipboard_android_impl"],
+    ios_deps = [":clipboard_conformance", ":clipboard_factory"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@valdi//src/valdi_modules/src/valdi/valdi_core",
+    ],
+)
+
+# Android implementation: generated-Kotlin interface implementor (ClipboardModuleImpl,
+# package-private - a public class would collide with the interface), the
+# @RegisterValdiModule Kotlin factory (annotation processor emits the
+# assets/valdi_native_modules manifest entry), and copied bridge-free
+# plugin helpers. kt_android_library compiles mixed .kt/.java sources.
+valdi_android_library(
+    name = "clipboard_android_impl",
+    srcs = glob([
+        "android/**",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":clipboard_api_kt",
+        "@valdi//valdi:valdi_java",
+    ],
+)
+
+# plugin2valdi ObjC conformance targets - compiled + linked into the module's
+# _objc library through ios_deps (the valdi_module macro adds ios_deps to
+# the exported client_objc_library, cf. bzl/valdi/valdi_module.bzl)
+objc_library(
+    name = "clipboard_conformance",
+    hdrs = ["ios/clipboard_conformance.h"],
+    srcs = ["ios/clipboard_conformance.m"],
+    sdk_frameworks = ["MobileCoreServices"],
+    # -I. + -fmodules: the <clipboardTypes/clipboardTypes.h> import resolves
+    # through the generated API library's propagated clang module map (the
+    # same copts the reference-verified Swift-path factory carries; validated
+    # through the objcpush toolchain build)
+    copts = ["-I.", "-fmodules"],
+    target_compatible_with = ["@platforms//os:ios"],
+    deps = [":clipboard_api_objc", "@valdi//valdi_core:valdi_core_objc"],
+)
+
+objc_library(
+    name = "clipboard_factory",
+    srcs = ["ios/clipboard_factory.m"],
+    copts = ["-I.", "-fmodules"],
+    target_compatible_with = ["@platforms//os:ios"],
+    deps = [":clipboard_api_objc", ":clipboard_conformance", "@valdi//valdi_core:valdi_core_objc"],
+)

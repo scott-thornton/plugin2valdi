@@ -1,0 +1,38 @@
+name: example-ios
+
+# Manual trigger for now. Needs macOS (Xcode + the patched Valdi
+# compiler, built per example/README.md).
+on:
+  workflow_dispatch:
+
+jobs:
+  app:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Fetch the Valdi release tarball and apply the compiler patch
+        run: |
+          curl -sL https://github.com/Snapchat/Valdi/archive/beta-0.1.1.tar.gz | tar xz
+          mv Valdi-beta-0.1.1 example/valdi
+          cd example/valdi
+          git apply ../upstream-pr.diff
+
+      - name: Build the patched compiler
+        run: |
+          cd example/valdi/compiler/compiler/Compiler
+          swift build -c release
+          mkdir -p ../out/macos
+          cp .build/release/Compiler ../out/macos/valdi_compiler
+
+      - name: Build the example app
+        run: |
+          cd example
+          bazel build //:example_app_ios --@valdi//bzl/valdi:use_local_compiler=true
+
+      - name: Upload app
+        uses: actions/upload-artifact@v4
+        with:
+          name: example-app-ios
+          path: example/bazel-out/**/example_app_ios_archive-root/Payload/*.app

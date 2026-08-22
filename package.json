@@ -1,0 +1,46 @@
+{
+  "name": "plugin2valdi",
+  "version": "0.2.0",
+  "description": "Capacitor and React Native plugin -> Valdi polyglot module translator. AST-based contract extraction with Swift/ObjC/Java/Kotlin conformance emission; verified end-to-end on iOS and Android against a patched Valdi beta-0.1.1 toolchain.",
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "author": "Scott Thornton",
+  "keywords": [
+    "capacitor",
+    "valdi",
+    "polyglot",
+    "migration",
+    "transpiler",
+    "snapchat"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scott-thornton/plugin2valdi.git"
+  },
+  "bin": {
+    "plugin2valdi": "bin/plugin2valdi.mjs",
+    "plugin2valdi-validate": "bin/plugin2valdi-validate.mjs"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/run.mjs",
+    "lint": "eslint lib bin scripts",
+    "guards": "node scripts/guards.mjs"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "dependencies": {
+    "@babel/parser": "^8.0.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.0"
+  }
+}
