@@ -25,12 +25,15 @@ flags in lib/ carry the evidence.
 
 ## Upstream dependency
 
-The toolchain needs one compiler fix until Valdi merges it. Generated type
-headers import themselves. This breaks clang module builds, which is the
-path Swift interop uses.
+Generated type headers imported themselves. This broke clang module
+builds, which is the path Swift interop uses.
 
-The fix is submitted upstream as PR Snapchat/Valdi#150. Until it merges,
-apply `upstream-pr.diff` to your Valdi checkout:
+The fix (a static `filterSelfImports` helper in
+CombineNativeSourcesProcessor) is MERGED upstream: Snapchat/Valdi commit
+8d81afd1, 2026-08-24. No tagged release carries it yet - the latest tag
+is still beta-0.1.1. Until a release ships it, apply `upstream-pr.diff`
+to the beta tarball checkout (iOS only; Android builds run unpatched,
+CI-verified):
 
 ```bash
 cd <valdi-checkout>

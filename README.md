@@ -32,7 +32,7 @@ whole chain on an iOS simulator and an Android emulator.
 | Requirement | Version |
 |---|---|
 | Node.js | >= 22.18 (per `engines` in package.json) |
-| Patched Valdi toolchain (to compile outputs) | beta-0.1.1 + `upstream-pr.diff`, see [docs/compiler-grammar.md](docs/compiler-grammar.md) - the upstream fix and its status |
+| Patched Valdi toolchain (to compile outputs) | beta-0.1.1 + `upstream-pr.diff` for iOS until a release carries the merged upstream fix, see [docs/compiler-grammar.md](docs/compiler-grammar.md) |
 | Example app toolchain | Xcode, Bazel 7.2.1, Android SDK/NDK, see [example/README.md](example/README.md) |
 
 Translation alone needs Node only. The patch and the toolchain are needed

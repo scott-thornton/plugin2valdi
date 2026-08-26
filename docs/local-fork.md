@@ -6,6 +6,11 @@ belong in the upstream PR; they exist to make the patched compiler actually
 build and run on this host. Diff baseline: `valdi-pristine-copy/` (untouched
 tarball).
 
+## Landed upstream (8d81afd1, 2026-08-24)
+
+The PR closed as merged-via-commit; the local fork can drop its copy of
+the fix on the next rebuild against a tagged release.
+
 ## In the PR (not covered here)
 
 - `compiler/compiler/Compiler/Sources/Processors/CombineNativeSourcesProcessor.swift`
